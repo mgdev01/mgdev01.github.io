@@ -20,7 +20,7 @@ self.addEventListener('notificationclick', function(event) {
           return client.focus();
       }
       if (clients.openWindow) {
-        return clients.openWindow('https://deanhume.github.io/typography');
+        return clients.openWindow('/');
       }
     })
   );
