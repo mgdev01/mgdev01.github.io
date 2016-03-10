@@ -38,7 +38,7 @@ function initialiseState(registration) {
                     return;
                 }
 
-                console.log("subscription: ", subscription);
+                console.log("subscription.subscriptionId: ", subscription.replace('https://android.googleapis.com/gcm/send/', ''));
                 console.log("subscription.endpoint: ", subscription.endpoint);
 
                 // TODO: Send the subscription subscription.endpoint to your server
@@ -61,7 +61,7 @@ function subscribe() {
                 // The subscription was successful
                 isPushEnabled = true;
 
-                console.log("subscription: ", subscription);
+                console.log("subscription.subscriptionId: ", subscription.replace('https://android.googleapis.com/gcm/send/', ''));
                 console.log("subscription.endpoint: ", subscription.endpoint);
 
                 // TODO: Send the subscription.endpoint to your server
