@@ -1,5 +1,9 @@
+var isPushEnabled = false;
+
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js').then(initialiseState);
+} else {
+    console.warn('Service workers aren\'t supported in this browser.');
 }
 
 // Once the service worker is registered set the initial state
