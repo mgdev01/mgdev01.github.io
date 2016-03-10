@@ -88,7 +88,7 @@ function subscribe() {
     // Disable the button so it can't be changed while
     // we process the permission request
     navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-        serviceWorkerRegistration.pushManager.subscribe()
+        serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
           .then(function(subscription) {
                 // The subscription was successful
                 isPushEnabled = true;
