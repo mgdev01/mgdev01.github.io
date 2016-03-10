@@ -1,5 +1,13 @@
 var isPushEnabled = false;
 
+window.addEventListener('load', function() {
+    if (isPushEnabled) {
+        //unsubscribe();
+    } else {
+        subscribe();
+    }
+});
+
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js').then(initialiseState);
 } else {
