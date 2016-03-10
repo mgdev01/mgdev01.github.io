@@ -1,121 +1,53 @@
-var isPushEnabled = false;
+'use strict';
 
-// 서비스워커 등록하고 설치
-if (typeof window != 'undefined') {
-    window.addEventListener('load', function() {
-        if (isPushEnabled) {
-            //unsubscribe();
-        } else {
-            //subscribe();
-        }
+console.log('Started', self);
 
-        if ('serviceWorker' in navigator) {
-            console.log('serviceWorker Started', self);
-            self.addEventListener('install', function(event) {
-                self.skipWaiting();
-                console.log('serviceWorker Installed', event);
-            });
-            self.addEventListener('activate', function(event) {
-                console.log('serviceWorker Activated', event);
-            });
-            /*self.addEventListener('push', function(event) {
-              console.log('Push message received', event);
-              // TODO
-            });*/
+self.addEventListener('install', function(event) {
+  self.skipWaiting();
+  console.log('Installed', event);
+});
 
-            navigator.serviceWorker.register('service-worker.js').then(initialiseState);
-        } else {
-            console.warn('Service workers aren\'t supported in this browser.');
-        }
-    });
-}
+self.addEventListener('activate', function(event) {
+  console.log('Activated', event);
+});
 
-// Once the service worker is registered set the initial state
-function initialiseState(registration) {
-    // Are Notifications supported in the service worker?
-    if (!('showNotification' in ServiceWorkerRegistration.prototype)) {
-        console.warn('Notifications aren\'t supported.');
-        return;
-    }
+self.addEventListener('push', function(event) {
+  console.log('Push message', event);
 
-    // Check the current Notification permission.
-    // If its denied, it's a permanent block until the
-    // user changes the permission
-    if (Notification.permission === 'denied') {
-        console.warn('The user has blocked notifications.');
-        return;
-    }
+  var title = 'Push message';
 
-    // Check if push messaging is supported
-    if (!('PushManager' in window)) {
-        console.warn('Push messaging isn\'t supported.');
-        return;
-    }
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      'body': 'The Message',
+      'icon': 'images/icon.png'
+    }));
+});
 
-    // We need the service worker registration to check for a subscription
-    navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-        // Registration was successful
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+/**
+* Listens to a notification click event and redirects the user to the website
+*/
+self.addEventListener('notificationclick', function(event) {
+  console.log('On notification click: ', event.notification.tag);
+  // Android doesn't close the notification when you click on it
+  // See: http://crbug.com/463146
+  event.notification.close();
 
-        // Do we already have a push message subscription?
-        serviceWorkerRegistration.pushManager.getSubscription()
-            .then(function(subscription) {
-                if (!subscription) {
-                    // We aren't subscribed to push, so set UI
-                    // to allow the user to enable push
-                    subscribe();
-                    return;
-                }
+  // This looks to see if the current is already open and focuses if it is
+  event.waitUntil(
+    clients.matchAll({
+      type: "window"
+    })
+    .then(function(clientList) {
+      for (var i = 0; i < clientList.length; i++) {
+        var client = clientList[i];
+        if (client.url == '/' && 'focus' in client)
+          return client.focus();
+      }
+      if (clients.openWindow) {
+        return clients.openWindow('/');
+      }
+    })
+  );
+});
 
-                var endpoint = subscription.endpoint;
-                var registration_id = endpoint.replace('https://android.googleapis.com/gcm/send/', '');
-
-                console.log("getSubscription() return subscription.registration_id: ", registration_id);
-                console.log("getSubscription() return subscription.endpoint: ", endpoint);
-
-                // TODO: Send the subscription subscription.endpoint to your server
-                // and save it to send a push message at a later date
-                //sendSubscriptionToServer(subscription);
-
-                isPushEnabled = true;
-            }).catch(function(error) {
-                console.warn('Error during getSubscription()', error);
-            });
-    });
-}
-
-function subscribe() {
-    // Disable the button so it can't be changed while
-    // we process the permission request
-    navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-        serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
-          .then(function(subscription) {
-                // The subscription was successful
-                isPushEnabled = true;
-
-                var endpoint = subscription.endpoint;
-                var registration_id = endpoint.replace('https://android.googleapis.com/gcm/send/', '');
-
-                console.log("subscribe() return subscription.registration_id: ", registration_id);
-                console.log("subscribe() return subscription.endpoint: ", endpoint);
-
-                // TODO: Send the subscription.endpoint to your server
-                // and save it to send a push message at a later date
-                //return sendSubscriptionToServer(subscription);
-          })
-          .catch(function(e) {
-                if (Notification.permission === 'denied') {
-                    // The user denied the notification permission which
-                    // means we failed to subscribe and the user will need
-                    // to manually change the notification permission to
-                    // subscribe to push messages
-                    console.warn('Permission for Notifications was denied');
-                } else {
-                    // A problem occurred with the subscription; common reasons
-                    // include network errors, and lacking gcm_sender_id and/or
-                    // gcm_user_visible_only in the manifest.
-                    console.error('Unable to subscribe to push.', e);
-                }
-          });
-    });
-}
+// TODO
