@@ -1,5 +1,6 @@
 var isPushEnabled = false;
 
+// 서비스워커 등록하고 설치
 if (typeof window != 'undefined') {
     window.addEventListener('load', function() {
         if (isPushEnabled) {
@@ -10,6 +11,19 @@ if (typeof window != 'undefined') {
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('service-worker.js').then(initialiseState);
+
+            console.log('Started', self);
+            self.addEventListener('install', function(event) {
+                self.skipWaiting();
+                console.log('Installed', event);
+            });
+            self.addEventListener('activate', function(event) {
+                console.log('Activated', event);
+            });
+            /*self.addEventListener('push', function(event) {
+              console.log('Push message received', event);
+              // TODO
+            });*/
         } else {
             console.warn('Service workers aren\'t supported in this browser.');
         }
@@ -41,7 +55,7 @@ function initialiseState(registration) {
     // We need the service worker registration to check for a subscription
     navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
         // Registration was successful
-        console.log('ServiceWorker registration successful with scope: ',    registration.scope);
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
 
         // Do we already have a push message subscription?
         serviceWorkerRegistration.pushManager.getSubscription()

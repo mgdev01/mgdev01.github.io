@@ -7,8 +7,7 @@ self.addEventListener('notificationclick', function(event) {
   // See: http://crbug.com/463146
   event.notification.close();
 
-  // This looks to see if the current is already open and
-  // focuses if it is
+  // This looks to see if the current is already open and focuses if it is
   event.waitUntil(
     clients.matchAll({
       type: "window"
