@@ -5,7 +5,7 @@ if (typeof window != 'undefined') {
         if (isPushEnabled) {
             //unsubscribe();
         } else {
-            subscribe();
+            //subscribe();
         }
 
         if ('serviceWorker' in navigator) {
@@ -49,6 +49,7 @@ function initialiseState(registration) {
                 if (!subscription) {
                     // We aren't subscribed to push, so set UI
                     // to allow the user to enable push
+                    subscribe();
                     return;
                 }
 
