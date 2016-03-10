@@ -10,20 +10,20 @@ if (typeof window != 'undefined') {
         }
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js').then(initialiseState);
-
-            console.log('Started', self);
+            console.log('serviceWorker Started', self);
             self.addEventListener('install', function(event) {
                 self.skipWaiting();
-                console.log('Installed', event);
+                console.log('serviceWorker Installed', event);
             });
             self.addEventListener('activate', function(event) {
-                console.log('Activated', event);
+                console.log('serviceWorker Activated', event);
             });
             /*self.addEventListener('push', function(event) {
               console.log('Push message received', event);
               // TODO
             });*/
+
+            navigator.serviceWorker.register('service-worker.js').then(initialiseState);
         } else {
             console.warn('Service workers aren\'t supported in this browser.');
         }
