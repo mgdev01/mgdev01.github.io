@@ -1,18 +1,18 @@
 var isPushEnabled = false;
 
-document.addEventListener('load', function() {
+window.addEventListener('load', function() {
     if (isPushEnabled) {
         //unsubscribe();
     } else {
         subscribe();
     }
-});
 
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js').then(initialiseState);
-} else {
-    console.warn('Service workers aren\'t supported in this browser.');
-}
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js').then(initialiseState);
+    } else {
+        console.warn('Service workers aren\'t supported in this browser.');
+    }
+});
 
 // Once the service worker is registered set the initial state
 function initialiseState(registration) {
