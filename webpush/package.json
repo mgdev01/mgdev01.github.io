@@ -1,0 +1,14 @@
+{
+  "name": "webpush",
+  "version": "1.0.0",
+  "description": "Web Push notification",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "push"
+  ],
+  "author": "YJKwak",
+  "license": "ISC"
+}
