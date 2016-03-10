@@ -1,6 +1,6 @@
 var isPushEnabled = false;
 
-if (window) {
+if (typeof window != 'undefined') {
     window.addEventListener('load', function() {
         if (isPushEnabled) {
             //unsubscribe();
